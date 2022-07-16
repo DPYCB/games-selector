@@ -10,21 +10,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
-import com.dpycb.gamesselector.R
-import com.dpycb.gamesselector.presentation.games.GameListItem
+import com.dpycb.gamesselector.presentation.games.GameListItemViewState
 import com.dpycb.gamesselector.presentation.games.GamesListViewModel
-import proto.Game
 
 @Composable
 fun MainScreen() {
@@ -37,67 +35,84 @@ fun MainScreen() {
         val viewModel: GamesListViewModel = hiltViewModel()
         val newGamesViewState = viewModel.getNewGamesListFlow().collectAsState()
 
-        MainPoster(newGamesViewState.value.gamesListItems.randomOrNull() ?: GameListItem())
-
-        GamesPreviewList(
-            games = newGamesViewState.value.gamesListItems,
-            onMovieClicked = viewModel::onMovieClicked,
-            onCategoryExpand = viewModel::onCategoryClick,
-            titleText = "Новинки"
-        )
-    }
-}
-
-@Composable
-fun MainPoster(game: GameListItem) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-    ) {
-        SubcomposeAsyncImage(
-            model = game.imageRef,
-            contentScale = ContentScale.Crop,
-            loading = { CircularProgressIndicator() },
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        Column(
-            modifier = Modifier
-                .padding(
-                    start = 20.dp,
-                    bottom = 16.dp
-                )
-                .align(Alignment.BottomStart)
-        ) {
-            //TODO check colors!
-            Text(
-                text = game.name,
-                style = MaterialTheme.typography.subtitle1,
-                color = Color.White,
+        if (newGamesViewState.value.gamesListItems.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(48.dp))
+            }
+        }
+        else {
+            MainPoster(
+                game = newGamesViewState.value.gamesListItems.randomOrNull() ?: GameListItemViewState(),
+                modifier = Modifier.padding(top = 12.dp)
             )
-            Text(
-                text = game.genre,
-                style = MaterialTheme.typography.subtitle2,
-                color = Color.White,
+
+            GamesPreviewList(
+                games = newGamesViewState.value.gamesListItems,
+                onMovieClicked = viewModel::onMovieClicked,
+                onCategoryExpand = viewModel::onCategoryClick,
+                titleText = "Новинки",
+                modifier = Modifier.padding(top = 10.dp)
             )
         }
     }
 }
 
 @Composable
+fun MainPoster(game: GameListItemViewState, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(color = MaterialTheme.colors.surface),
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
+        verticalAlignment = Alignment.Top
+    ) {
+        SubcomposeAsyncImage(
+            model = game.imageRef,
+            contentScale = ContentScale.Crop,
+            loading = { CircularProgressIndicator() },
+            contentDescription = null,
+            modifier = Modifier.fillMaxHeight().width(120.dp)
+        )
+
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.padding(end = 14.dp)
+        ) {
+            Text(
+                text = game.name,
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+            listOf(
+                "Жанр: ${game.genre}" to Modifier.padding(top = 12.dp),
+                "Дата выхода: ${game.releaseDate}" to Modifier,
+                "Платформы: ${game.platforms}" to Modifier.padding(top = 16.dp),
+                game.description to Modifier.padding(top = 16.dp),
+                ).forEach{ (text, modifier) ->
+                GameInfoSubtitles(text, modifier)
+            }
+        }
+    }
+}
+
+@Composable
 fun GamesPreviewList(
-    games: List<GameListItem>,
-    onMovieClicked: (Context, GameListItem) -> Unit,
+    games: List<GameListItemViewState>,
+    onMovieClicked: (Context, GameListItemViewState) -> Unit,
     onCategoryExpand: (Context) -> Unit,
     titleText: String,
+    modifier: Modifier = Modifier
 ) {
     val currentContext = LocalContext.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(top = 12.dp)
+            .background(color = MaterialTheme.colors.surface)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -142,14 +157,12 @@ fun GamesPreviewList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun GameListItemView(game: GameListItem, onMovieClicked: (Context, GameListItem) -> Unit) {
+fun GameListItemView(game: GameListItemViewState, onMovieClicked: (Context, GameListItemViewState) -> Unit) {
     val currentContext = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
             .size(width = 120.dp, height = 160.dp)
-            .clickable(
-                onClick = { onMovieClicked(currentContext, game) }
-            )
+            .clickable(onClick = { onMovieClicked(currentContext, game) })
     ) {
         val (image, title, subtitle) = createRefs()
         SubcomposeAsyncImage(
@@ -157,6 +170,7 @@ fun GameListItemView(game: GameListItem, onMovieClicked: (Context, GameListItem)
             loading = { CircularProgressIndicator() },
             contentDescription = null,
             modifier = Modifier
+                .size(width = 90.dp, height = 120.dp)
                 .constrainAs(image) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -187,6 +201,19 @@ fun GameListItemView(game: GameListItem, onMovieClicked: (Context, GameListItem)
         )
     }
 }
+
+@Composable
+fun GameInfoSubtitles(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.caption,
+        color = MaterialTheme.colors.onSurface,
+        modifier = modifier,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable

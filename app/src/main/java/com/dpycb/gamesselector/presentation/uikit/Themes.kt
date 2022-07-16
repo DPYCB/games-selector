@@ -1,20 +1,19 @@
-package com.dpycb.gamesselector.presentation
+package com.dpycb.gamesselector.presentation.uikit
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import com.dpycb.gamesselector.presentation.uikit.PrimaryDark
-import com.dpycb.gamesselector.presentation.uikit.PrimaryLight
 
 private val lightMaterial = lightColors(
-    primary = PrimaryLight
+    primary = PrimaryLight,
+    secondary = SecondaryLight,
+    background = BackgroundLight,
 )
 
-private val darkMaterial = darkColors(
-    primary = PrimaryDark
-)
+//TODO add dark colors
+private val darkMaterial = darkColors()
 
 @Composable
 fun MyComposeTheme(
