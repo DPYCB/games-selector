@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GamesRepository @Inject constructor(
     private val igdbServerDataSource: IGDBServerDataSource,
 ) : IGamesRepository {
-    override suspend fun requestGames() = igdbServerDataSource.requestSomeGames()
+    override suspend fun getNewestGames() = igdbServerDataSource.requestNewestGames()
 }

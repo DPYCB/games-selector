@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 import proto.Game
 
 interface IGamesRepository {
-    suspend fun requestGames(): Flow<List<Game>>
+    suspend fun getNewestGames(): Flow<List<Game>>
 }

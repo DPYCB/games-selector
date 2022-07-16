@@ -22,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.dpycb.gamesselector.R
+import com.dpycb.gamesselector.presentation.games.GameListItem
 import com.dpycb.gamesselector.presentation.games.GamesListViewModel
 import proto.Game
 
@@ -36,10 +37,10 @@ fun MainScreen() {
         val viewModel: GamesListViewModel = hiltViewModel()
         val newGamesViewState = viewModel.getNewGamesListFlow().collectAsState()
 
-        MainPoster(newGamesViewState.value.randomOrNull() ?: Game.getDefaultInstance())
+        MainPoster(newGamesViewState.value.gamesListItems.randomOrNull() ?: GameListItem())
 
         GamesPreviewList(
-            games = newGamesViewState.value,
+            games = newGamesViewState.value.gamesListItems,
             onMovieClicked = viewModel::onMovieClicked,
             onCategoryExpand = viewModel::onCategoryClick,
             titleText = "Новинки"
@@ -48,19 +49,20 @@ fun MainScreen() {
 }
 
 @Composable
-fun MainPoster(game: Game) {
+fun MainPoster(game: GameListItem) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
         SubcomposeAsyncImage(
-            model = game.artworksList[0].url,
+            model = game.imageRef,
             contentScale = ContentScale.Crop,
             loading = { CircularProgressIndicator() },
             contentDescription = null,
             modifier = Modifier.fillMaxSize()
         )
+
         Column(
             modifier = Modifier
                 .padding(
@@ -76,7 +78,7 @@ fun MainPoster(game: Game) {
                 color = Color.White,
             )
             Text(
-                text = game.firstReleaseDate.toString(),
+                text = game.genre,
                 style = MaterialTheme.typography.subtitle2,
                 color = Color.White,
             )
@@ -86,8 +88,8 @@ fun MainPoster(game: Game) {
 
 @Composable
 fun GamesPreviewList(
-    games: List<Game>,
-    onMovieClicked: (Context, Game) -> Unit,
+    games: List<GameListItem>,
+    onMovieClicked: (Context, GameListItem) -> Unit,
     onCategoryExpand: (Context) -> Unit,
     titleText: String,
 ) {
@@ -103,11 +105,11 @@ fun GamesPreviewList(
         ) {
             Text(
                 text = titleText,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .padding(start = 12.dp)
+                    .padding(start = 16.dp)
             )
             Button(
                 onClick = { onCategoryExpand(currentContext) },
@@ -132,7 +134,7 @@ fun GamesPreviewList(
             contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
             items(games.take(10)) { game ->
-                GameListItem(game = game, onMovieClicked = onMovieClicked)
+                GameListItemView(game = game, onMovieClicked = onMovieClicked)
             }
         }
     }
@@ -140,7 +142,7 @@ fun GamesPreviewList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun GameListItem(game: Game, onMovieClicked: (Context, Game) -> Unit) {
+fun GameListItemView(game: GameListItem, onMovieClicked: (Context, GameListItem) -> Unit) {
     val currentContext = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
@@ -150,39 +152,23 @@ fun GameListItem(game: Game, onMovieClicked: (Context, Game) -> Unit) {
             )
     ) {
         val (image, title, subtitle) = createRefs()
-        if (game.hasCover()) {
-            SubcomposeAsyncImage(
-                model = game.cover.url,
-                loading = { CircularProgressIndicator() },
-                contentDescription = null,
-                modifier = Modifier
-                    .constrainAs(image) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-        }
-        else {
-            Image(
-                imageVector = ImageVector
-                    .vectorResource(R.drawable.ic_baseline_home_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .background(color = MaterialTheme.colors.secondaryVariant)
-                    .constrainAs(image) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-        }
+        SubcomposeAsyncImage(
+            model = game.imageRef,
+            loading = { CircularProgressIndicator() },
+            contentDescription = null,
+            modifier = Modifier
+                .constrainAs(image) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
         Text(
             text = game.name,
             color = MaterialTheme.colors.onSurface,
             maxLines = 1,
             textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.button,
+            style = MaterialTheme.typography.caption,
             modifier = Modifier.constrainAs(title) {
                 top.linkTo(image.bottom)
                 start.linkTo(image.start)
@@ -190,8 +176,8 @@ fun GameListItem(game: Game, onMovieClicked: (Context, Game) -> Unit) {
             }
         )
         Text(
-            text = game.firstReleaseDate.toString(),
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+            text = game.genre,
+            color = MaterialTheme.colors.onSurface,
             style = MaterialTheme.typography.overline,
             textAlign = TextAlign.Start,
             modifier = Modifier.constrainAs(subtitle) {
