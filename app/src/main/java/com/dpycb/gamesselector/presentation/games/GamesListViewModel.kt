@@ -33,6 +33,6 @@ class GamesListViewModel @Inject constructor(
     }
 
     fun onCategoryClick(context: Context) {
-        Toast.makeText(context, "open single game screen", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Тут что-то откроется", Toast.LENGTH_SHORT).show()
     }
 }

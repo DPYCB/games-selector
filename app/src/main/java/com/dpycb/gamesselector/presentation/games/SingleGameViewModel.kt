@@ -1,5 +1,7 @@
 package com.dpycb.gamesselector.presentation.games
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dpycb.gamesselector.domain.IGameDetailUseCase
@@ -25,5 +27,9 @@ class SingleGameViewModel @Inject constructor(
                     gameDetailViewStateFlow.value = it
                 }
         }
+    }
+
+    fun markGame(context: Context, gameId: Long) {
+        Toast.makeText(context, "Игра id=$gameId будет куда-то добавлена", Toast.LENGTH_SHORT).show()
     }
 }

@@ -19,13 +19,16 @@ class IGDBServerDataSource @Inject constructor(
     companion object {
         private const val CLIENT_ID = "3wexez9y24n5nhhxk52lhtmr9xzas9"
         private const val CLIENT_SECRET = "l5zkwqa1ab957611jofin5z4vqeqh8"
+        private const val GAME_LIST_FIELDS = "*, cover.image_id, genres.*, platforms.*"
+        private const val GAME_DETAIL_FIELDS = GAME_LIST_FIELDS +
+                ", screenshots.image_id, videos.video_id, rating, rating_count"
     }
 
     suspend fun requestNewestGames(): Flow<List<Game>> = flow {
         val twitchToken = getTwitchToken()?.access_token ?: ""
         IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
         val apicalypse = APICalypse()
-            .fields("*, cover.image_id, genres.*, platforms.*")
+            .fields(GAME_LIST_FIELDS)
             .limit(20)
             .sort("release_dates.date", Sort.DESCENDING)
         try{
@@ -40,7 +43,7 @@ class IGDBServerDataSource @Inject constructor(
         val twitchToken = getTwitchToken()?.access_token ?: ""
         IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
         val apicalypse = APICalypse()
-            .fields("*, cover.image_id, genres.*, platforms.*, screenshots.image_id, videos.video_id, rating, rating_count")
+            .fields(GAME_DETAIL_FIELDS)
             .where("id = $gameId")
             .limit(1)
         try{

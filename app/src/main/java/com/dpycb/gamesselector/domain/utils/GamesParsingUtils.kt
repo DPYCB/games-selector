@@ -14,7 +14,12 @@ fun parseReleaseDate(date: Timestamp): String = SimpleDateFormat("dd.MM.yyyy")
 
 fun parsePlatforms(platforms: List<Platform>): String {
     var result = ""
-    platforms.forEach { result += it.name }
+    platforms.forEachIndexed { index, platform ->
+        result += when (platforms.lastIndex == index) {
+            true -> platform.name
+            else -> "${platform.name}, "
+        }
+    }
     return result
 }
 

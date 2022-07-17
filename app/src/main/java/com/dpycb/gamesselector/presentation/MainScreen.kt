@@ -26,23 +26,22 @@ import com.dpycb.gamesselector.presentation.games.GamesListViewModel
 
 @Composable
 fun MainScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val viewModel: GamesListViewModel = hiltViewModel()
-        val newGamesViewState = viewModel.getNewGamesListFlow().collectAsState()
-
-        if (newGamesViewState.value.gamesListItems.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(48.dp))
-            }
+    val viewModel: GamesListViewModel = hiltViewModel()
+    val newGamesViewState = viewModel.getNewGamesListFlow().collectAsState()
+    if (newGamesViewState.value.gamesListItems.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator(modifier = Modifier
+                .align(Alignment.Center)
+                .size(48.dp))
         }
-        else {
+    }
+    else {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             MainPoster(
                 game = newGamesViewState.value.gamesListItems.randomOrNull() ?: GameListItemViewState(),
                 modifier = Modifier.padding(top = 12.dp)
