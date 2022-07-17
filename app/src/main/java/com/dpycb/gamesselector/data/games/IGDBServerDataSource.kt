@@ -4,10 +4,7 @@ import android.util.Log
 import com.api.igdb.apicalypse.APICalypse
 import com.api.igdb.apicalypse.Sort
 import com.api.igdb.exceptions.RequestException
-import com.api.igdb.request.IGDBWrapper
-import com.api.igdb.request.TwitchAuthenticator
-import com.api.igdb.request.covers
-import com.api.igdb.request.games
+import com.api.igdb.request.*
 import com.api.igdb.utils.TwitchToken
 import com.dpycb.gamesselector.di.IoDispatcher
 import kotlinx.coroutines.*
@@ -36,6 +33,21 @@ class IGDBServerDataSource @Inject constructor(
         } catch(e: RequestException) {
             Log.e("IGDB_ERROR", e.stackTraceToString())
             emit(listOf())
+        }
+    }.flowOn(ioDispatcher)
+
+    suspend fun requestGameDetail(gameId: Long): Flow<Game> = flow {
+        val twitchToken = getTwitchToken()?.access_token ?: ""
+        IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
+        val apicalypse = APICalypse()
+            .fields("*, cover.image_id, genres.*, platforms.*, screenshots.image_id, videos.video_id, rating, rating_count")
+            .where("id = $gameId")
+            .limit(1)
+        try{
+            emit(IGDBWrapper.games(apicalypse)[0])
+        } catch(e: RequestException) {
+            Log.e("IGDB_ERROR", e.stackTraceToString())
+            emit(Game.getDefaultInstance())
         }
     }.flowOn(ioDispatcher)
 

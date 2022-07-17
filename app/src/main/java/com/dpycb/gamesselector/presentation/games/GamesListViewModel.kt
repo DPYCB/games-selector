@@ -1,10 +1,12 @@
 package com.dpycb.gamesselector.presentation.games
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dpycb.gamesselector.domain.games.IGamesListUseCase
+import com.dpycb.gamesselector.domain.IGamesListUseCase
+import com.dpycb.gamesselector.presentation.SingleGameActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,8 +28,8 @@ class GamesListViewModel @Inject constructor(
 
     fun getNewGamesListFlow() = newGamesListFlow.asStateFlow()
 
-    fun onMovieClicked(context: Context, game: GameListItemViewState) {
-        Toast.makeText(context, "open single game ${game.id} screen", Toast.LENGTH_SHORT).show()
+    fun onMovieClicked(context: Context, gameId: Long) {
+        SingleGameActivity.create(context, gameId)
     }
 
     fun onCategoryClick(context: Context) {

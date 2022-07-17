@@ -103,7 +103,7 @@ fun MainPoster(game: GameListItemViewState, modifier: Modifier = Modifier) {
 @Composable
 fun GamesPreviewList(
     games: List<GameListItemViewState>,
-    onMovieClicked: (Context, GameListItemViewState) -> Unit,
+    onMovieClicked: (Context, Long) -> Unit,
     onCategoryExpand: (Context) -> Unit,
     titleText: String,
     modifier: Modifier = Modifier
@@ -157,12 +157,12 @@ fun GamesPreviewList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun GameListItemView(game: GameListItemViewState, onMovieClicked: (Context, GameListItemViewState) -> Unit) {
+fun GameListItemView(game: GameListItemViewState, onMovieClicked: (Context, Long) -> Unit) {
     val currentContext = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
             .size(width = 120.dp, height = 160.dp)
-            .clickable(onClick = { onMovieClicked(currentContext, game) })
+            .clickable(onClick = { onMovieClicked(currentContext, game.id) })
     ) {
         val (image, title, subtitle) = createRefs()
         SubcomposeAsyncImage(
@@ -203,13 +203,13 @@ fun GameListItemView(game: GameListItemViewState, onMovieClicked: (Context, Game
 }
 
 @Composable
-fun GameInfoSubtitles(text: String, modifier: Modifier = Modifier) {
+fun GameInfoSubtitles(text: String, modifier: Modifier = Modifier, maxLines: Int = 2) {
     Text(
         text = text,
         style = MaterialTheme.typography.caption,
         color = MaterialTheme.colors.onSurface,
         modifier = modifier,
-        maxLines = 2,
+        maxLines = maxLines,
         overflow = TextOverflow.Ellipsis
     )
 }

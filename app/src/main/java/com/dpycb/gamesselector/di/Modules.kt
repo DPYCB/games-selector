@@ -1,9 +1,7 @@
 package com.dpycb.gamesselector.di
 
 import com.dpycb.gamesselector.data.games.GamesRepository
-import com.dpycb.gamesselector.domain.games.GamesListUseCase
-import com.dpycb.gamesselector.domain.games.IGamesListUseCase
-import com.dpycb.gamesselector.domain.games.IGamesRepository
+import com.dpycb.gamesselector.domain.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -24,6 +22,9 @@ abstract class GamesBindsModule {
 
     @Binds
     abstract fun bindGamesListUseCase(useCase: GamesListUseCase) : IGamesListUseCase
+
+    @Binds
+    abstract fun bindGameDetailUseCase(useCase: GameDetailUseCase) : IGameDetailUseCase
 }
 
 @Module
