@@ -39,6 +39,7 @@ class IGDBServerDataSource @Inject constructor(
         }
     }.flowOn(ioDispatcher)
 
+
     suspend fun requestGameDetail(gameId: Long): Flow<Game> = flow {
         val twitchToken = getTwitchToken()?.access_token ?: ""
         IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
@@ -53,6 +54,23 @@ class IGDBServerDataSource @Inject constructor(
             emit(Game.getDefaultInstance())
         }
     }.flowOn(ioDispatcher)
+
+    suspend fun getSimilarGames(similarGames: String): Flow<List<Game>> = flow {
+        val twitchToken = getTwitchToken()?.access_token ?: ""
+        IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
+        val apicalypse = APICalypse()
+            .fields(GAME_LIST_FIELDS)
+            .where("id = $similarGames")
+            .limit(20)
+            .sort("release_dates.date", Sort.DESCENDING)
+        try{
+            emit(IGDBWrapper.games(apicalypse))
+        } catch(e: RequestException) {
+            Log.e("IGDB_ERROR", e.stackTraceToString())
+            emit(listOf())
+        }
+    }.flowOn(ioDispatcher)
+
 
     private suspend fun getTwitchToken(): TwitchToken? {
         return when (TwitchAuthenticator.twitchToken) {

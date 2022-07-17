@@ -29,6 +29,11 @@ fun SingleGameScreen(gameId: Long) {
     val viewModel: SingleGameViewModel = hiltViewModel()
     viewModel.updateGameDetailViewState(gameId)
     val viewState = viewModel.getGameDetailViewStateFlow().collectAsState()
+    val similarGamesViewState = viewModel.getSimilarGamesViewState().collectAsState()
+    val similarGames = viewState.value.similarGames
+    if (similarGames.isNotEmpty()) {
+        viewModel.updateSimilarGamesListViewState(similarGames)
+    }
     if (viewState.value.id == 0L) {
         Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier
@@ -61,7 +66,9 @@ fun SingleGameScreen(gameId: Long) {
                             .height(200.dp)
                     )
                     Button(
-                        modifier = Modifier.align(Alignment.BottomEnd).padding(end = 16.dp),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 16.dp),
                         onClick = { viewModel.markGame(currentContext, gameId) },
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = 0.dp,
@@ -102,6 +109,17 @@ fun SingleGameScreen(gameId: Long) {
                         rating = viewState.value.rating,
                         ratingCount = viewState.value.ratingCount
                     )
+                    if (similarGames.isNotEmpty()) {
+                        GamesPreviewList(
+                            games = similarGamesViewState.value.gamesListItems,
+                            onMovieClicked = viewModel::onSimilarMovieClicked,
+                            titleText = "Похожие игры",
+                            titleTextStyle = MaterialTheme.typography.subtitle1,
+                            titleTextWeight = FontWeight.Bold,
+                            hasCategoryButton = false,
+                            modifier = Modifier.padding(top = 24.dp),
+                        )
+                    }
                 }
             }
         }

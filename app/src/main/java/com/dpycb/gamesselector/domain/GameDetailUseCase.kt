@@ -24,6 +24,7 @@ class GameDetailUseCase @Inject constructor(
         screenshotsRef = parseScreenshots(game.screenshotsList),
         videoUrl = parseVideoUrl(game.videosList),
         rating = game.rating,
-        ratingCount = game.ratingCount
+        ratingCount = game.ratingCount,
+        similarGames = game.similarGamesList.map { it.id }
     )
 }

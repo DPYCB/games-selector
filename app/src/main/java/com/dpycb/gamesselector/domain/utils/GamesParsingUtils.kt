@@ -44,3 +44,14 @@ fun parseVideoUrl(videos: List<GameVideo>): String = try {
 catch (th: Throwable) {
     ""
 }
+
+fun parseGameIdsToRequestString(gameIds: List<Long>): String {
+    var requestString = "("
+    gameIds.forEachIndexed{ index, gameId ->
+        requestString += when (index) {
+            gameIds.lastIndex -> "$gameId)"
+            else -> "$gameId, "
+        }
+    }
+    return requestString
+}

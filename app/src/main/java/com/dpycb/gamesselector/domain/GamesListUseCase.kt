@@ -13,6 +13,10 @@ class GamesListUseCase @Inject constructor(
         .getNewestGames()
         .map { GamesListViewState(it.filter { it.cover.imageId.isNotEmpty() }.map(::mapToGameListItem)) }
 
+    override suspend fun getSimilarGames(similarGames: List<Long>) = gamesRepository
+        .getSimilarGames(parseGameIdsToRequestString(similarGames))
+        .map { GamesListViewState(it.filter { it.cover.imageId.isNotEmpty() }.map(::mapToGameListItem)) }
+
     private fun mapToGameListItem(rawGame: Game) = GameListItemViewState(
             id = rawGame.id,
             name = rawGame.name,

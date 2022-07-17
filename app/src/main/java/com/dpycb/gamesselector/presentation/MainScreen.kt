@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -153,9 +154,12 @@ fun MediaSmallPreviewListView(modifier: Modifier = Modifier, mediaList: List<Str
 fun GamesPreviewList(
     games: List<GameListItemViewState>,
     onMovieClicked: (Context, Long) -> Unit,
-    onCategoryExpand: (Context) -> Unit,
+    onCategoryExpand: (Context) -> Unit = { },
     titleText: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hasCategoryButton: Boolean = true,
+    titleTextStyle: TextStyle = MaterialTheme.typography.body2,
+    titleTextWeight: FontWeight? = null
 ) {
     val currentContext = LocalContext.current
     Column(
@@ -169,27 +173,30 @@ fun GamesPreviewList(
         ) {
             Text(
                 text = titleText,
-                style = MaterialTheme.typography.body2,
+                style = titleTextStyle,
+                fontWeight = titleTextWeight,
                 color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = 16.dp)
             )
-            Button(
-                onClick = { onCategoryExpand(currentContext) },
-                colors = ButtonDefaults.textButtonColors(),
-                modifier = Modifier.align(Alignment.CenterVertically),
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 0.dp,
-                    pressedElevation = 0.dp,
-                    disabledElevation = 0.dp
-                )
-            ) {
-                Text(
-                    text = "все",
-                    style = MaterialTheme.typography.button,
-                    color = MaterialTheme.colors.primary,
-                )
+            if (hasCategoryButton) {
+                Button(
+                    onClick = { onCategoryExpand(currentContext) },
+                    colors = ButtonDefaults.textButtonColors(),
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 0.dp,
+                        disabledElevation = 0.dp
+                    )
+                ) {
+                    Text(
+                        text = "все",
+                        style = MaterialTheme.typography.button,
+                        color = MaterialTheme.colors.primary,
+                    )
+                }
             }
         }
         LazyRow(

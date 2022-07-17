@@ -26,5 +26,5 @@ data class GameDetailViewState (
     val videoUrl: String = "",
     val rating: Double = 0.0,
     val ratingCount: Int = 0,
-    val similarGames: GamesListViewState = GamesListViewState()
+    val similarGames: List<Long> = listOf()
 )
