@@ -72,7 +72,9 @@ fun MainPoster(
     val game = viewState.value
     val currentContext = LocalContext.current
     if (game.id == 0L) {
-        Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)) {
             CircularProgressIndicator(modifier = Modifier
                 .align(Alignment.Center)
                 .size(48.dp)
@@ -84,7 +86,7 @@ fun MainPoster(
             modifier = modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colors.surface)
-                .clickable{
+                .clickable {
                     onMovieClicked(currentContext, game.id)
                 },
             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
@@ -202,7 +204,6 @@ fun GamesPreviewList(
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            contentPadding = PaddingValues(horizontal = 8.dp)
         ) {
             items(games.take(10)) { game ->
                 GameListItemView(game = game, onMovieClicked = onMovieClicked)
@@ -215,45 +216,35 @@ fun GamesPreviewList(
 @Composable
 fun GameListItemView(game: GameListItemViewState, onMovieClicked: (Context, Long) -> Unit) {
     val currentContext = LocalContext.current
-    ConstraintLayout(
+    Column(
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start,
         modifier = Modifier
-            .size(width = 120.dp, height = 160.dp)
-            .clickable(onClick = { onMovieClicked(currentContext, game.id) })
+            .width(90.dp)
+            .padding(horizontal = 8.dp)
+            .clickable { onMovieClicked(currentContext, game.id) }
     ) {
-        val (image, title, subtitle) = createRefs()
         SubcomposeAsyncImage(
             model = game.imageRef,
             loading = { CircularProgressIndicator() },
             contentDescription = null,
-            modifier = Modifier
-                .size(width = 90.dp, height = 120.dp)
-                .constrainAs(image) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+            modifier = Modifier.height(120.dp)
         )
         Text(
             text = game.name,
             color = MaterialTheme.colors.onSurface,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.caption,
-            modifier = Modifier.constrainAs(title) {
-                top.linkTo(image.bottom)
-                start.linkTo(image.start)
-                end.linkTo(image.end)
-            }
         )
         Text(
             text = game.genre,
             color = MaterialTheme.colors.onSurface,
             style = MaterialTheme.typography.overline,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Start,
-            modifier = Modifier.constrainAs(subtitle) {
-                top.linkTo(title.bottom)
-                start.linkTo(title.start)
-            }
         )
     }
 }

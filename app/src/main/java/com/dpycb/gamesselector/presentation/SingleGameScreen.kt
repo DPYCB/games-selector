@@ -117,7 +117,7 @@ fun SingleGameScreen(gameId: Long) {
                             titleTextStyle = MaterialTheme.typography.subtitle1,
                             titleTextWeight = FontWeight.Bold,
                             hasCategoryButton = false,
-                            modifier = Modifier.padding(top = 24.dp),
+                            modifier = Modifier.padding(vertical = 24.dp),
                         )
                     }
                 }
