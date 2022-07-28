@@ -1,0 +1,31 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+apply from: "${rootProject.projectDir}/buildtypes.gradle"
+
+android {
+    with allBuildTypesConfig
+}
+
+dependencies {
+    implementation rootProject.ext.igdb_wrapper
+
+    implementation rootProject.ext.ktx_core
+    implementation rootProject.ext.appcompat
+    implementation rootProject.ext.material
+
+    implementation rootProject.ext.coroutines_core
+    implementation rootProject.ext.coroutines
+
+    implementation rootProject.ext.hilt
+    implementation rootProject.ext.hilt_navigation
+    kapt rootProject.ext.hilt_compiler
+
+    testImplementation rootProject.ext.junit
+    androidTestImplementation rootProject.ext.android_junit
+    androidTestImplementation rootProject.ext.espresso
+}

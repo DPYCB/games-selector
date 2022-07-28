@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.SingleGameActivity"
+            android:name=".presentation.singlegame.SingleGameActivity"
             android:exported="true"/>
     </application>
 

@@ -1,44 +1,25 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
 
+apply from: "${rootProject.projectDir}/buildtypes.gradle"
+
 android {
-    compileSdkVersion 32
-
-    defaultConfig {
-        applicationId "com.dpycb.gamesselector"
-        minSdk 23
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
-        demoRelease {
-            signingConfig signingConfigs.debug
-        }
-    }
+    with allBuildTypesConfig
     buildFeatures {
         compose true
     }
-
     composeOptions {
         kotlinCompilerExtensionVersion = compose_version
     }
 }
 
 dependencies {
-    implementation project(":games")
-    implementation project(":uikit")
     implementation project(":utils")
+    implementation project(":uikit")
 
     implementation rootProject.ext.ktx_core
     implementation rootProject.ext.appcompat

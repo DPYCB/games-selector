@@ -18,7 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.dpycb.gamesselector.presentation.MainScreen
+import com.dpycb.gamesselector.presentation.gameslist.GamesListScreen
 import com.dpycb.gamesselector.presentation.SettingsScreen
 
 @Composable
@@ -29,7 +29,7 @@ fun NavGraph(navController: NavHostController) {
         modifier = Modifier.padding(bottom = 56.dp)
     ) {
         composable(BottomNavItem.MainScreenPage.screenRoute) {
-            MainScreen()
+            GamesListScreen()
         }
         composable(BottomNavItem.Settings.screenRoute) {
             SettingsScreen()

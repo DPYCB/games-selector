@@ -15,3 +15,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Games Selector"
 include ':app'
+include ':utils'
+include ':uikit'
+include ':games'

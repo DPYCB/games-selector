@@ -1,0 +1,12 @@
+ext.allBuildTypesConfig = {
+    compileSdkVersion 32
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+        demoRelease {
+            signingConfig signingConfigs.debug
+        }
+    }
+}
