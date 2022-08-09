@@ -46,6 +46,11 @@ dependencies {
     implementation rootProject.ext.compose_navigation
     implementation rootProject.ext.compose_constraint_layout
 
+    implementation rootProject.ext.room
+    kapt rootProject.ext.room_compiler
+    kapt rootProject.ext.arch_persistence_room_compiler
+    implementation rootProject.ext.gson
+
     debugImplementation rootProject.ext.compose_tooling
 
     implementation rootProject.ext.hilt
