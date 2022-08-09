@@ -52,7 +52,7 @@ class IGDBServerDataSource @Inject constructor(
         }
     }.flowOn(ioDispatcher)
 
-    suspend fun getSimilarGames(similarGames: String, accessToken: String): Flow<List<Game>> = flow {
+    suspend fun requestSimilarGames(similarGames: String, accessToken: String): Flow<List<Game>> = flow {
         IGDBWrapper.setCredentials(CLIENT_ID, accessToken)
         val apicalypse = APICalypse()
             .fields(GAME_LIST_FIELDS)

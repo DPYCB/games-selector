@@ -9,7 +9,7 @@ class GamesRepository @Inject constructor(
 ) : IGamesRepository {
     override suspend fun getNewestGames() = igdbServerDataSource.requestNewestGames(getValidToken())
 
-    override suspend fun getSimilarGames(similarGames: String) = igdbServerDataSource.getSimilarGames(similarGames, getValidToken())
+    override suspend fun getSimilarGames(similarGames: String) = igdbServerDataSource.requestSimilarGames(similarGames, getValidToken())
 
     override suspend fun getGameDetail(gameId: Long) = igdbServerDataSource.requestGameDetail(gameId, getValidToken())
 
