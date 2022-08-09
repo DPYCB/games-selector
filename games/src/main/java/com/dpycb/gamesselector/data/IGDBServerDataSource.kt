@@ -16,16 +16,15 @@ class IGDBServerDataSource @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     companion object {
-        private const val CLIENT_ID = "3wexez9y24n5nhhxk52lhtmr9xzas9"
-        private const val CLIENT_SECRET = "l5zkwqa1ab957611jofin5z4vqeqh8"
+        const val CLIENT_ID = "3wexez9y24n5nhhxk52lhtmr9xzas9"
+        const val CLIENT_SECRET = "l5zkwqa1ab957611jofin5z4vqeqh8"
         private const val GAME_LIST_FIELDS = "*, cover.image_id, genres.*, platforms.*"
         private const val GAME_DETAIL_FIELDS = GAME_LIST_FIELDS +
                 ", screenshots.image_id, videos.video_id, rating, rating_count"
     }
 
-    suspend fun requestNewestGames(): Flow<List<Game>> = flow {
-        val twitchToken = getTwitchToken()?.access_token ?: ""
-        IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
+    suspend fun requestNewestGames(accessToken: String): Flow<List<Game>> = flow {
+        IGDBWrapper.setCredentials(CLIENT_ID, accessToken)
         val apicalypse = APICalypse()
             .fields(GAME_LIST_FIELDS)
             .limit(20)
@@ -39,9 +38,8 @@ class IGDBServerDataSource @Inject constructor(
     }.flowOn(ioDispatcher)
 
 
-    suspend fun requestGameDetail(gameId: Long): Flow<Game> = flow {
-        val twitchToken = getTwitchToken()?.access_token ?: ""
-        IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
+    suspend fun requestGameDetail(gameId: Long, accessToken: String): Flow<Game> = flow {
+        IGDBWrapper.setCredentials(CLIENT_ID, accessToken)
         val apicalypse = APICalypse()
             .fields(GAME_DETAIL_FIELDS)
             .where("id = $gameId")
@@ -54,9 +52,8 @@ class IGDBServerDataSource @Inject constructor(
         }
     }.flowOn(ioDispatcher)
 
-    suspend fun getSimilarGames(similarGames: String): Flow<List<Game>> = flow {
-        val twitchToken = getTwitchToken()?.access_token ?: ""
-        IGDBWrapper.setCredentials(CLIENT_ID, twitchToken)
+    suspend fun getSimilarGames(similarGames: String, accessToken: String): Flow<List<Game>> = flow {
+        IGDBWrapper.setCredentials(CLIENT_ID, accessToken)
         val apicalypse = APICalypse()
             .fields(GAME_LIST_FIELDS)
             .where("id = $similarGames")
@@ -69,16 +66,4 @@ class IGDBServerDataSource @Inject constructor(
             emit(listOf())
         }
     }.flowOn(ioDispatcher)
-
-
-    private suspend fun getTwitchToken(): TwitchToken? {
-        return when (TwitchAuthenticator.twitchToken) {
-            null -> coroutineScope {
-                withContext(ioDispatcher) {
-                    TwitchAuthenticator.requestTwitchToken(CLIENT_ID, CLIENT_SECRET)
-                }
-            }
-            else -> TwitchAuthenticator.twitchToken
-        }
-    }
 }
