@@ -44,8 +44,4 @@ class SingleGameViewModel @Inject constructor(
     fun markGame(context: Context, gameId: Long) {
         Toast.makeText(context, "Игра id=$gameId будет куда-то добавлена", Toast.LENGTH_SHORT).show()
     }
-
-    fun onSimilarMovieClicked(context: Context, gameId: Long) {
-        Toast.makeText(context, "Тут откроется такой же экран для игры $gameId", Toast.LENGTH_SHORT).show()
-    }
 }

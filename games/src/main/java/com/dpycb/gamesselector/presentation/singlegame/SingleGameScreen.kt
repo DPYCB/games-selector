@@ -23,7 +23,10 @@ import com.dpycb.gamesselector.presentation.gameslist.GamesPreviewList
 import com.dpycb.gamesselector.uikit.MyComposeTheme
 
 @Composable
-fun SingleGameScreen(gameId: Long) {
+fun SingleGameScreen(
+    gameId: Long,
+    onGameClicked: (Long) -> Unit = { },
+) {
     val viewModel: SingleGameViewModel = hiltViewModel()
     viewModel.updateGameDetailViewState(gameId)
     val viewState = viewModel.getGameDetailViewStateFlow().collectAsState()
@@ -110,7 +113,7 @@ fun SingleGameScreen(gameId: Long) {
                     if (similarGames.isNotEmpty()) {
                         GamesPreviewList(
                             games = similarGamesViewState.value.gamesListItems,
-                            onMovieClicked = viewModel::onSimilarMovieClicked,
+                            onGameClicked = onGameClicked,
                             titleText = "Похожие игры",
                             titleTextStyle = MaterialTheme.typography.subtitle1,
                             titleTextWeight = FontWeight.Bold,
