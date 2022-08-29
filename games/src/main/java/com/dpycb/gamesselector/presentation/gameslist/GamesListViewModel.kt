@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.dpycb.gamesselector.domain.IGameDetailUseCase
 import com.dpycb.gamesselector.domain.IGamesListUseCase
 import com.dpycb.gamesselector.presentation.singlegame.GameDetailViewState
-import com.dpycb.gamesselector.presentation.singlegame.SingleGameActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -32,10 +31,6 @@ class GamesListViewModel @Inject constructor(
     fun getNewGamesListFlow() = newGamesListFlow.asStateFlow()
 
     fun getMainPosterGameFlow() = gameDetailViewStateFlow.asStateFlow()
-
-    fun onMovieClicked(context: Context, gameId: Long) {
-        SingleGameActivity.create(context, gameId)
-    }
 
     fun onCategoryClick(context: Context) {
         Toast.makeText(context, "Тут что-то откроется", Toast.LENGTH_SHORT).show()

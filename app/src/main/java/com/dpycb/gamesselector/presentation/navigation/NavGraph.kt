@@ -15,11 +15,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.dpycb.gamesselector.presentation.gameslist.GamesListScreen
 import com.dpycb.gamesselector.presentation.SettingsScreen
+import com.dpycb.gamesselector.presentation.singlegame.SingleGameScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -29,10 +32,26 @@ fun NavGraph(navController: NavHostController) {
         modifier = Modifier.padding(bottom = 56.dp)
     ) {
         composable(BottomNavItem.MainScreenPage.screenRoute) {
-            GamesListScreen()
+            GamesListScreen(
+                onGameClicked = { selectedGameId ->
+                    navController.navigate("${BottomNavItem.SingleGamePage.screenRoute}/$selectedGameId")
+                }
+            )
         }
         composable(BottomNavItem.Settings.screenRoute) {
             SettingsScreen()
+        }
+        composable(
+            "${BottomNavItem.SingleGamePage.screenRoute}/{gameId}",
+            arguments = listOf(navArgument("gameId") { type = NavType.LongType })
+        ) {
+            val gameId = it.arguments?.getLong("gameId") ?: 0L
+            SingleGameScreen(
+                gameId = gameId,
+                onGameClicked = { selectedGameId ->
+                    navController.navigate("${BottomNavItem.SingleGamePage.screenRoute}/$selectedGameId")
+                }
+            )
         }
     }
 }

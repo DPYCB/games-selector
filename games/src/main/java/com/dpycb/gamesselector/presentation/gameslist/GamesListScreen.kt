@@ -27,7 +27,9 @@ import coil.compose.SubcomposeAsyncImage
 import com.dpycb.gamesselector.presentation.singlegame.GameDetailViewState
 
 @Composable
-fun GamesListScreen() {
+fun GamesListScreen(
+    onGameClicked: (Long) -> Unit = {}
+) {
     val viewModel: GamesListViewModel = hiltViewModel()
     val newGamesViewState = viewModel.getNewGamesListFlow().collectAsState()
     val mainPosterViewState = viewModel.getMainPosterGameFlow().collectAsState()
@@ -48,12 +50,12 @@ fun GamesListScreen() {
             MainPoster(
                 viewState = mainPosterViewState,
                 modifier = Modifier.padding(top = 12.dp),
-                onMovieClicked = viewModel::onMovieClicked
+                onGameClicked = onGameClicked
             )
 
             GamesPreviewList(
                 games = newGamesViewState.value.gamesListItems,
-                onMovieClicked = viewModel::onMovieClicked,
+                onGameClicked = onGameClicked,
                 onCategoryExpand = viewModel::onCategoryClick,
                 titleText = "Новинки",
                 modifier = Modifier.padding(top = 10.dp)
@@ -66,10 +68,9 @@ fun GamesListScreen() {
 fun MainPoster(
     viewState: State<GameDetailViewState>,
     modifier: Modifier = Modifier,
-    onMovieClicked: (Context, Long) -> Unit,
+    onGameClicked: (Long) -> Unit,
 ) {
     val game = viewState.value
-    val currentContext = LocalContext.current
     if (game.id == 0L) {
         Box(modifier = Modifier
             .fillMaxWidth()
@@ -85,9 +86,7 @@ fun MainPoster(
             modifier = modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.colors.surface)
-                .clickable {
-                    onMovieClicked(currentContext, game.id)
-                },
+                .clickable { onGameClicked(game.id) },
             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
             verticalAlignment = Alignment.Top
         ) {
@@ -154,7 +153,7 @@ fun MediaSmallPreviewListView(modifier: Modifier = Modifier, mediaList: List<Str
 @Composable
 fun GamesPreviewList(
     games: List<GameListItemViewState>,
-    onMovieClicked: (Context, Long) -> Unit,
+    onGameClicked: (Long) -> Unit,
     onCategoryExpand: (Context) -> Unit = { },
     titleText: String,
     modifier: Modifier = Modifier,
@@ -205,7 +204,7 @@ fun GamesPreviewList(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             items(games.take(10)) { game ->
-                GameListItemView(game = game, onMovieClicked = onMovieClicked)
+                GameListItemView(game = game, onGameClicked = onGameClicked)
             }
         }
     }
@@ -213,15 +212,14 @@ fun GamesPreviewList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun GameListItemView(game: GameListItemViewState, onMovieClicked: (Context, Long) -> Unit) {
-    val currentContext = LocalContext.current
+fun GameListItemView(game: GameListItemViewState, onGameClicked: (Long) -> Unit) {
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .width(90.dp)
             .padding(horizontal = 8.dp)
-            .clickable { onMovieClicked(currentContext, game.id) }
+            .clickable { onGameClicked(game.id) }
     ) {
         SubcomposeAsyncImage(
             model = game.imageRef,
